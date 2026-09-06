@@ -12,6 +12,12 @@ Earlier releases remain available in the 1.0 release history, the 1.0 preview hi
 
 ## Unreleased
 
+### Synchronisation and storage
+
+#### Fixed
+
+- First-time Object Storage setup now completes when **Use Custom HTTP Handler** is enabled for an empty remote, including a new Cloudflare R2 bucket. LiveSync can now create the remote state required to begin synchronisation. (#1166)
+
 ## 1.0.26
 
 ~~1.0.25~~ was cancelled because pre-release validation found that LiveSync could appear to finish synchronising even though Android had not written a received file to the Vault; the warning appeared only after restart.
