@@ -107,6 +107,7 @@ async function generateBootstrapSetupURI(
         region: objectStorage.region,
         force_path_style: String(objectStorage.forcePathStyle),
         bucket_prefix: bucketPrefix,
+        use_custom_request_handler: "true",
         passphrase: randomBytes(24).toString("base64url"),
         uri_passphrase: setupPassphrase,
     });
@@ -285,6 +286,11 @@ async function main(): Promise<void> {
             bucketPrefix,
             "The first device did not activate the unique bucket prefix."
         );
+        assertEqual(
+            firstState.useCustomRequestHandler,
+            true,
+            "The first device did not activate the Custom HTTP Handler."
+        );
 
         await writeNote(context.cliBinary, sessionA.cliEnv, noteFromFirst, firstContent);
         await pushLocalChanges(context.cliBinary, sessionA.cliEnv);
@@ -329,6 +335,11 @@ async function main(): Promise<void> {
             secondState.bucketPrefix,
             bucketPrefix,
             "The second device did not import the unique bucket prefix."
+        );
+        assertEqual(
+            secondState.useCustomRequestHandler,
+            true,
+            "The second device did not import the Custom HTTP Handler setting."
         );
         await pushLocalChanges(context.cliBinary, sessionB.cliEnv);
         await waitForPathContent(vaultB, noteFromFirst, firstContent);
