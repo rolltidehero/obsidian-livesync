@@ -12,25 +12,36 @@ Earlier releases remain available in the 1.0 release history, the 1.0 preview hi
 
 ## Unreleased
 
+## 1.0.26
+
+~~1.0.25~~ was cancelled because pre-release validation found that LiveSync could appear to finish synchronising even though Android had not written a received file to the Vault; the warning appeared only after restart.
+
+6th September, 2026
+
 ### Synchronisation and storage
 
 #### Fixed
 
-- Watcher events from an external case-only parent-folder rename no longer let a stale deletion remove a note's Metadata while the file still exists. Moves out of the selected files retain the existing deletion behaviour; this fix does not add general folder-rename handling or path-case convergence. (#1168)
-- Conflict resolution dialogues now close when the same file is resolved elsewhere or the plug-in unloads. Requests for different files are shown one at a time, while a newer request for the same file replaces the stale dialogue.
-- An individual file-processing failure during ordinary start-up no longer keeps the entire application unready. A start-up notice asks the user to check the affected files and generate a report for details; each path is recorded in verbose logs and remains eligible for retry, while explicit Fetch and Rebuild operations retain strict completion.
-- When a replicated file cannot be written to the Vault, LiveSync now warns immediately instead of appearing to have processed it successfully. The affected path is recorded in the report and remains eligible for a later scan. (#1164)
-- Replication readiness diagnostics now state that application initialisation is incomplete instead of reporting only 'Not ready'. Database-preparation failures show a short notice, with the failed stage available in verbose logs.
+- Files inside a folder are no longer silently removed from synchronisation when an external tool changes only the letter case of that folder while Obsidian is running. This prevents the stale deletion from reaching other devices or later removing the local file. Moving files into ignored or otherwise excluded locations retains the existing behaviour, and the folder-name case itself may still differ between devices. (#1168)
+- A problem processing one file during ordinary start-up no longer prevents every other file from synchronising. LiveSync warns about the affected files and can retry them later; Fetch and Rebuild still stop if they cannot finish safely. (#1164)
+- When LiveSync cannot finish preparing this device for synchronisation, it now says that synchronisation is unavailable and directs you to generate a report, instead of remaining at 'Not ready'. (#1164)
 
 #### Improved
 
-- Start-up now keeps unconfigured Vaults on the onboarding path without running configured-only checks or accepting Config Doctor and incomplete-document repair requests. Returning a configured Vault to an unconfigured state also retires those requests for the current plug-in process, so completing setup admits them only after the requested restart.
-- The active-file warning now concisely identifies file or folder names longer than 255 UTF-8 bytes as an Android and Linux compatibility risk, without rejecting or changing the path.
+- When LiveSync cannot write a received file to the Vault, it now warns immediately instead of appearing to have synchronised it successfully. The generated report identifies the affected path, and a later scan can try it again.
 
-### Testing
+### Conflict handling and recovery
 
-- An optional real-Obsidian regression checks for stale deletions after an external parent-directory case change, including Metadata, Chunks, a second Vault, and restart. Developer documentation now distinguishes file-event handling from database-to-storage reflection.
-- Start-up migrations, integrity checks, Config Doctor, basic commands, and the Obsidian replication ribbon now have focused regression tests for their service composition. Real Obsidian checks cover unconfigured onboarding, configured start-up scanning and individual file failures, Config Doctor detection and layout, command registration, and the established ribbon icon.
+#### Improved
+
+- Conflict resolution dialogues now close when the same file is resolved elsewhere or when the plug-in unloads. Requests for different files are shown one at a time, while a newer request for the same file replaces the older one.
+
+### Setup and compatibility
+
+#### Improved
+
+- Unconfigured Vaults now stay focused on setup instead of running Config Doctor or incomplete-document checks before they can be used. Returning a configured Vault to an unconfigured state also stops those checks until the requested restart. (#1161)
+- When the active file contains a file or folder name longer than 255 UTF-8 bytes, LiveSync now explains that the path may not work on some Android and Linux file systems. It does not rename or reject the file. (#1164)
 
 ## 1.0.24
 
